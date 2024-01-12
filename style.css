@@ -1,0 +1,24 @@
+body
+{
+    background-color: darkslategray;
+}
+
+.dropdownContainer
+{
+    visibility: hidden;
+    border-style: solid;
+    border-color: #000000;
+    border-width: thin;
+    background-color: #cccccc;
+    padding: 5px;
+}
+
+.dropdownItem
+{
+    margin: 0;
+}
+
+.dropdownItem:hover
+{
+    background-color: white;
+}
