@@ -1,78 +1,95 @@
-const inputElement = document.getElementById("inputField");
-const inputHelp = document.getElementById("inputHelp");
-const dropdown = document.getElementById("dropdownDiv");
+// variables
+const body = document.querySelector("body"),
+    input = document.querySelector("#language"),
+    dropdown = document.querySelector(".dropdown"),
+    dropdownList = document.querySelector(".dropdown_wrapper"),
+    languages = document.querySelector("#languages");
 
-let arr = ["Choice A", "Random", "Third pick", "Choice B", "Pick this"]
+let listItems = [];
+const items = ["First", "Second", "Third", "Fourth", "Number 5", "six", "seven"];
 
-inputElement.addEventListener("focus", (event) =>
+// functions
+const addActiveClass = (e) =>
 {
-    fillDropdown(inputElement.value);
-    dropdown.style.visibility = "visible";
-});
+    // Adds active class to dropdown
+    dropdown.classList.toggle("active");
+    dropdownList.classList.toggle("active");
 
-inputElement.addEventListener("blur", (event) =>
-{
-    setTimeout(function () {
-        dropdown.style.visibility = "hidden";
-    }, 100);
-});
+    // Reset search input value
+    e.target.value !== "" ? (e.target.value = "") : null;
 
-inputElement.addEventListener("input", (event) =>
-{
-    fillDropdown(inputElement.value);
-
-    setInputHelp();
-});
-
-function setInputHelp()
-{
-    if (inputElement.value == "")
+    // fill list
+    languages.innerHTML = "";
+    listItems = [];
+    for (let item of items)
     {
-        inputHelp.innerHTML = "Text that will change depending on if input exists in list or not";
-    }
-    else if (arr.includes(inputElement.value))
-    {
-        inputHelp.innerHTML = "Input exists: <b>" + inputElement.value + "</b>";
-    }
-    else
-    {
-        inputHelp.innerHTML = "<b>" + inputElement.value + "</b> is a new input";
-    }
-}
+        const element = document.createElement("span");
+        element.innerHTML = item;
 
-function fillDropdown(input)
-{
-    if (input == "")
-    {
-        dropdown.innerHTML = "";
-        for (let a of arr)
+        element.addEventListener("click", (e) =>
         {
-            addToDropdown(a);
-        }
+            let val = e.target.innerHTML;
+            // Update value of search input to chosen span
+            input.value = val;
+        });
+
+        languages.append(element);
+        listItems.push(element);
     }
-    else
+
+    console.log("focused");
+};
+
+const rmvActiveClass = () =>
+{
+    // Removes active class
+    dropdown.classList.remove("active");
+    dropdownList.classList.remove("active");
+};
+
+const filterList = () =>
+{
+    let filter = input.value.toLowerCase().trim();
+    languages.innerHTML = "";
+    listItems = [];
+    for (let item of items)
     {
-        dropdown.innerHTML = "";
-        for (let a of arr)
+        if (item.includes(filter) || filter == "")
         {
-            if (a.toLowerCase().includes(input.toLowerCase()))
+            const element = document.createElement("span");
+            element.innerHTML = item;
+
+            element.addEventListener("click", (e) =>
             {
-                addToDropdown(a);
-            }
+                let val = e.target.innerHTML;
+                // Update value of search input to chosen span
+                input.value = val;
+            });
+
+            languages.append(element);
+            listItems.push(element);
         }
     }
-}
 
-function addToDropdown(text)
+};
+
+// prevent form submission
+document.querySelector('form').addEventListener('submit', e => e.preventDefault());
+
+input.addEventListener("click", addActiveClass);
+input.addEventListener("input", () =>
 {
-    let item = document.createElement("p");
-    item.classList.add('dropdownItem');
-    item.innerHTML = text;
-    dropdown.append(item);
+    dropdown.classList.add("active");
+    dropdownList.classList.add("active");
+});
+document.addEventListener("click", (e) =>
+{
+    // Check clicked outside of input
+    e.target.id !== "language" &&
+        e.target.classList.contains("dropdown_wrapper") === false &&
+        e.target.classList.contains("languages_wrapper") === false
+        ? rmvActiveClass()
+        : null;
+});
 
-    item.addEventListener("click", () =>
-    {
-        inputElement.value = text;
-        setInputHelp();
-    });
-}
+input.addEventListener("keyup", filterList);
